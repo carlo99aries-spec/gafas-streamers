@@ -48,6 +48,48 @@ cámara CSI ──▶ Pi (H.264 por hardware) ──▶ RTMP ──▶ plataform
 Un solo codificado. Por eso el prototipo usa cable en lugar de radio: cualquier enlace
 inalámbrico desde los lentes obligaría a un segundo codificado o a enviar JPEG.
 
+## Salidas de video — tres destinos, un sensor
+
+El mismo sensor alimenta tres rutas simultáneas con un `tee`:
+
+| Modo | Protocolo | Latencia | Para qué |
+|---|---|---|---|
+| Directo público | RTMP | 2–6 s | TikTok, Facebook, YouTube |
+| Vista privada | WebRTC | < 1 s | monitor propio, productor, cliente |
+| Tap para el agente | JPEG ~1 fps | n/a | visión para el asistente |
+
+La visión del agente **no compite** con el directo: 1 fps de JPEG pesa ~40 KB/s contra
+3 Mbps del video. Un agente no necesita 30 fps para entender una escena; los necesita
+para transmitirla.
+
+WebRTC abre un modo que RTMP no puede dar: latencia menor a un segundo para un viewer
+privado. Útil para revisar el encuadre tú mismo o para que alguien te dirija el directo.
+
+## Audio — dos caminos
+
+| Camino | Latencia típica | Cuándo usarlo |
+|---|---|---|
+| Nativo en tiempo real | 0.6–1.0 s | por defecto |
+| STT → LLM → TTS | 1.5–3 s | fallback, o modelos locales |
+
+Los modelos nativos de audio (Gemini Live, OpenAI Realtime) reciben y emiten audio por
+un WebSocket, sin pasar por texto. Eso elimina dos saltos del camino y baja la sensación
+de conversación por debajo del segundo.
+
+El costo de ancho de banda es despreciable: 32 KB/s de subida y 48 KB/s de bajada,
+frente a los 3 Mbps del video.
+
+**Requisito:** el fallback STT/TTS debe existir. Los modelos nativos dependen de la nube
+y de la latencia de red; si el enlace se degrada, la voz tiene que seguir funcionando.
+
+## Prior art
+
+[VisionClaw](https://github.com/Intent-Lab/VisionClaw) demuestra este patrón sobre
+Meta Ray-Ban: video a ~1 fps hacia Gemini Live, audio nativo bidireccional y llamadas de
+herramientas contra OpenClaw. Sirve como validación de que 1 fps basta para visión y de
+que el audio nativo es el camino correcto. No se reutiliza su código: su licencia no es
+clara y está atado al SDK de Meta.
+
 ## Presupuesto de ancho de banda (30 fps)
 
 | Configuración | Mbps | Veredicto |

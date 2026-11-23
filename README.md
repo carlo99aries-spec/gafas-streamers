@@ -43,6 +43,16 @@ Esa separación resuelve los tres problemas clásicos de un wearable:
 | Calor junto a la sien | no hay procesador en el armazón |
 | Autonomía de los lentes | no hay batería: duran lo que dure la unidad |
 
+## Salidas
+
+Un mismo sensor, tres destinos simultáneos:
+
+| Modo | Protocolo | Latencia | Para qué |
+|---|---|---|---|
+| Directo público | RTMP | 2–6 s | TikTok, Facebook, YouTube |
+| Vista privada | WebRTC | < 1 s | revisar encuadre, dirección remota |
+| Visión del agente | JPEG ~1 fps | n/a | el asistente ve lo que tú ves |
+
 ## Números del diseño
 
 Validados por simulación (ver `sim/`):

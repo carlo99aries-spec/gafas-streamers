@@ -1,0 +1,16 @@
+# salidas generadas
+*.stl
+*.png
+*.svg
+svg_out/
+sistema.kicad_sch
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# sistema
+Thumbs.db
+.DS_Store
